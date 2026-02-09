@@ -1,7 +1,9 @@
 package com.zzootec.admin.service.serviceImpl;
 
+import com.zzootec.admin.dto.inventory.InventoryMovementResponseDto;
 import com.zzootec.admin.entity.InventoryMovement;
 import com.zzootec.admin.entity.Producto;
+import com.zzootec.admin.mapper.InventoryMovementMapper;
 import com.zzootec.admin.repository.InventoryMovementRepository;
 import com.zzootec.admin.repository.ProductoRepository;
 import com.zzootec.admin.service.InventoryMovementService;
@@ -18,6 +20,7 @@ public class InventoryMovementServiceImpl
 
     private final InventoryMovementRepository movementRepository;
     private final ProductoRepository productRepository;
+    private final InventoryMovementMapper movementMapper;
 
     @Override
     public void registerEntry(Producto product, Integer quantity, String origin) {
@@ -58,16 +61,22 @@ public class InventoryMovementServiceImpl
     }
 
     @Override
-    public List<InventoryMovement> findByProduct(Long productId) {
+    public List<InventoryMovementResponseDto> findByProduct(Long productId) {
 
         Producto product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElse(null);
+        
+        if (product == null) {
+            return List.of(); // Retorna lista vacía si no existe el producto
+        }
 
-        return movementRepository.findByProduct(product);
+        List<InventoryMovement> movements = movementRepository.findByProduct(product);
+        return movementMapper.toDtoList(movements);
     }
 
     @Override
-    public List<InventoryMovement> findAll() {
-        return movementRepository.findAll();
+    public List<InventoryMovementResponseDto> findAll() {
+        List<InventoryMovement> movements = movementRepository.findAll();
+        return movementMapper.toDtoList(movements);
     }
 }

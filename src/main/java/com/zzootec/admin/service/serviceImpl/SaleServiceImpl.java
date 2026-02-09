@@ -43,7 +43,7 @@ public class SaleServiceImpl implements SaleService {
         // ================= CREAR CABECERA =================
         Sale sale = Sale.builder()
                 .client(client)
-                .date(LocalDateTime.now())
+                .date(dto.getDate() != null ? dto.getDate() : LocalDateTime.now())
                 .channel(dto.getChannel())
                 .total(0.0)
                 .build();

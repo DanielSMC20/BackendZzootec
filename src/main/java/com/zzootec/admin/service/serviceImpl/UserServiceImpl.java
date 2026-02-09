@@ -48,6 +48,8 @@ public class UserServiceImpl implements UserService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .telefono(request.getTelefono())
+                .fechaNacimiento(request.getFechaNacimiento())
+                .imageUrl(request.getImageUrl())
                 .activo(true)
                 .roles(roles.stream().collect(Collectors.toSet()))
                 .build();
@@ -60,6 +62,7 @@ public class UserServiceImpl implements UserService {
                 .apellidos(saved.getApellidos())
                 .email(saved.getEmail())
                 .telefono(saved.getTelefono())
+                .fechaNacimiento(saved.getFechaNacimiento())
                 .imageUrl(saved.getImageUrl())
                 .activo(saved.isActivo())
                 .roles(
@@ -83,18 +86,50 @@ public class UserServiceImpl implements UserService {
         Usuario user = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        user.setEmail(request.getEmail());
+        if (request.getNombres() != null) {
+            user.setNombres(request.getNombres());
+        }
+
+        if (request.getApellidos() != null) {
+            user.setApellidos(request.getApellidos());
+        }
+
+        if (request.getTelefono() != null) {
+            user.setTelefono(request.getTelefono());
+        }
+
+        if (request.getFechaNacimiento() != null) {
+            user.setFechaNacimiento(request.getFechaNacimiento());
+        }
+
+        if (request.getImageUrl() != null) {
+            user.setImageUrl(request.getImageUrl());
+        }
+
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getActivo() != null) {
+            user.setActivo(request.getActivo());
+        }
 
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        List<Rol> roles = rolRepository.findByNombreIn(request.getRoles());
-        user.setRoles((Set<Rol>) roles);
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            Set<Rol> roles = rolRepository
+                    .findByNombreIn(request.getRoles())
+                    .stream()
+                    .collect(Collectors.toSet());
+            user.setRoles(roles);
+        }
 
         usuarioRepository.save(user);
         return mapToDto(user);
     }
+
 
     @Override
     public void deleteUser(Long id) {
@@ -111,7 +146,10 @@ public class UserServiceImpl implements UserService {
                 .nombres(user.getNombres())
                 .apellidos(user.getApellidos())
                 .email(user.getEmail())
+                .telefono(user.getTelefono())
+                .fechaNacimiento(user.getFechaNacimiento())
                 .imageUrl(user.getImageUrl())
+                .activo(user.isActivo())
                 .roles(
                         user.getRoles()
                                 .stream()
@@ -133,35 +171,55 @@ public class UserServiceImpl implements UserService {
         return UserResponseDto.builder()
                 .id(user.getId())
                 .nombres(user.getNombres())
+                .apellidos(user.getApellidos())
                 .email(user.getEmail())
                 .telefono(user.getTelefono())
+                .fechaNacimiento(user.getFechaNacimiento())
+                .imageUrl(user.getImageUrl())
+                .activo(user.isActivo())
                 .roles(
                         user.getRoles()
                                 .stream()
                                 .map(r -> r.getNombre())
                                 .collect(Collectors.toSet())
                 )
-
                 .build();
     }
 
-    @Transactional
-    @Override
-    public UserResponseDto updateProfile(String email, UpdateProfileRequestDto request) {
 
-        Usuario user = usuarioRepository.findByEmail(email)
+
+    @Override
+    @Transactional
+    public UserResponseDto updateProfileById(
+            Long userId,
+            UpdateProfileRequestDto dto
+    ) {
+
+        Usuario user = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (request.getNombres() != null && !request.getNombres().isBlank()) {
-            user.setNombres(request.getNombres());
+        if (dto.getNombres() != null) {
+            user.setNombres(dto.getNombres());
+        }
+        if (dto.getApellidos() != null) {
+            user.setApellidos(dto.getApellidos());
+        }
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+        if (dto.getTelefono() != null) {
+            user.setTelefono(dto.getTelefono());
+        }
+        if (dto.getFechaNacimiento() != null) {
+            user.setFechaNacimiento(java.time.LocalDate.parse(dto.getFechaNacimiento()));
+        }
+        if (dto.getImageUrl() != null) {
+            user.setImageUrl(dto.getImageUrl());
         }
 
-        if (request.getTelefono() != null && !request.getTelefono().isBlank()) {
-            user.setTelefono(request.getTelefono());
-        }
+        usuarioRepository.save(user);
 
-        // JPA hace dirty checking automáticamente
-        return mapToUserResponseDto(user);
+        return mapToDto(user);
     }
 
     @Override
@@ -172,14 +230,18 @@ public class UserServiceImpl implements UserService {
         return UserResponseDto.builder()
                 .id(user.getId())
                 .nombres(user.getNombres())
+                .apellidos(user.getApellidos())
                 .email(user.getEmail())
+                .telefono(user.getTelefono())
+                .fechaNacimiento(user.getFechaNacimiento())
+                .imageUrl(user.getImageUrl())
+                .activo(user.isActivo())
                 .roles(
                         user.getRoles()
                                 .stream()
                                 .map(r -> r.getNombre())
                                 .collect(Collectors.toSet())
                 )
-                .activo(user.isActivo())
                 .build();
     }
 

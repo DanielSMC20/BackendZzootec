@@ -1,6 +1,6 @@
 package com.zzootec.admin.service;
 
-import com.zzootec.admin.entity.InventoryMovement;
+import com.zzootec.admin.dto.inventory.InventoryMovementResponseDto;
 import com.zzootec.admin.entity.Producto;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public interface InventoryMovementService {
 
     void registerExit(Producto product, Integer quantity, String origin);
 
-    List<InventoryMovement> findByProduct(Long productId);
+    List<InventoryMovementResponseDto> findByProduct(Long productId);
 
-    List<InventoryMovement> findAll();
+    List<InventoryMovementResponseDto> findAll();
 }

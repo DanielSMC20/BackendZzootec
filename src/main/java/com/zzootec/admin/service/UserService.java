@@ -15,7 +15,10 @@ public interface UserService {
     void deleteUser(Long id);
     UserResponseDto getProfile(String email);
 
-    UserResponseDto updateProfile(String email, UpdateProfileRequestDto request);
+    UserResponseDto updateProfileById(
+            Long userId,
+            UpdateProfileRequestDto dto
+    );
     UserResponseDto getUserById(Long id);
 
 }

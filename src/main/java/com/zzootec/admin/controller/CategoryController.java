@@ -5,12 +5,14 @@ import com.zzootec.admin.dto.category.CategoryRequestDto;
 import com.zzootec.admin.dto.category.CategoryResponseDto;
 import com.zzootec.admin.service.CategoryService;
 import com.zzootec.admin.util.FileStorageService;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/admin/categories")
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
     private final FileStorageService fileStorageService;
+    private final Validator validator;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // =======================
@@ -49,6 +52,13 @@ public class CategoryController {
         CategoryRequestDto request =
                 objectMapper.readValue(data, CategoryRequestDto.class);
 
+        var violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new IllegalArgumentException(
+                violations.iterator().next().getMessage()
+            );
+        }
+
         if (file != null && !file.isEmpty()) {
             String imagePath = fileStorageService.saveImage(file, "categories");
             request.setImageUrl(imagePath);
@@ -69,6 +79,13 @@ public class CategoryController {
 
         CategoryRequestDto request =
                 objectMapper.readValue(data, CategoryRequestDto.class);
+
+        var violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new IllegalArgumentException(
+                violations.iterator().next().getMessage()
+            );
+        }
 
         if (file != null && !file.isEmpty()) {
             String imagePath = fileStorageService.saveImage(file, "categories");

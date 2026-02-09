@@ -41,7 +41,6 @@ public class AuthServiceImpl implements AuthService {
                         new BadCredentialsException("Credenciales inválidas")
                 );
 
-        // 3️⃣ Generar JWT
         String token = jwtService.generateToken(usuario);
 
         // 4️⃣ Respuesta

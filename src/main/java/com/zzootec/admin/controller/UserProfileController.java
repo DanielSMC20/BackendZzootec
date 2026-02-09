@@ -2,7 +2,12 @@ package com.zzootec.admin.controller;
 
 import com.zzootec.admin.dto.user.UserResponseDto;
 import com.zzootec.admin.dto.user.UpdateProfileRequestDto;
+import com.zzootec.admin.security.jwt.JwtService;
 import com.zzootec.admin.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +20,47 @@ import org.springframework.web.bind.annotation.*;
 public class UserProfileController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @GetMapping("/profile")
-    public UserResponseDto getProfile(Authentication authentication) {
-        String email = authentication.getName();
-        return userService.getProfile(email);
+    public UserResponseDto getProfile(HttpServletRequest request) {
+
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Token no enviado");
+        }
+
+        String token = authHeader.substring(7);
+
+        Long userId = jwtService
+                .parseClaims(token)
+                .getBody()
+                .get("userId", Long.class);
+
+        return userService.getUserById(userId);
     }
 
     @PutMapping("/profile")
     public ResponseEntity<UserResponseDto> updateProfile(
-            @RequestParam String email,
-            @RequestBody @Valid UpdateProfileRequestDto request) {
+            HttpServletRequest request,
+            @RequestBody @Valid UpdateProfileRequestDto dto
+    ) {
 
-        UserResponseDto updatedProfile = userService.updateProfile(email, request);
-        return ResponseEntity.ok(updatedProfile);
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Token no enviado");
+        }
+
+        String token = authHeader.substring(7);
+
+        Long userId = jwtService
+                .parseClaims(token)
+                .getBody()
+                .get("userId", Long.class);
+
+        UserResponseDto updated = userService.updateProfileById(userId, dto);
+        return ResponseEntity.ok(updated);
     }
 }

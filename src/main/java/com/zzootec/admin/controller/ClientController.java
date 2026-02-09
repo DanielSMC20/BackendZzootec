@@ -3,6 +3,7 @@ package com.zzootec.admin.controller;
 import com.zzootec.admin.dto.client.ClientRequestDto;
 import com.zzootec.admin.dto.client.ClientResponseDto;
 import com.zzootec.admin.service.ClientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class ClientController {
     private final ClientService clientService;
 
     @PostMapping
-    public ClientResponseDto create(@RequestBody ClientRequestDto dto) {
+    public ClientResponseDto create(@Valid @RequestBody ClientRequestDto dto) {
         return clientService.create(dto);
     }
 

@@ -14,21 +14,19 @@
         private final UsuarioRepository usuarioRepository;
 
         @Override
-        public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        public UserDetails loadUserByUsername(String email) {
 
-            Usuario usuario = usuarioRepository.findByEmail(email)
-                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+            Usuario user = usuarioRepository.findByEmail(email)
+                    .orElseThrow(() ->
+                            new UsernameNotFoundException("Usuario no encontrado"));
 
             return new org.springframework.security.core.userdetails.User(
-                    usuario.getEmail(),
-                    usuario.getPassword(),
-                    usuario.isActivo(),
-                    true,
-                    true,
-                    true,
-                    usuario.getRoles().stream()
-                            .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getNombre()))
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getRoles().stream()
+                            .map(r -> new SimpleGrantedAuthority(r.getNombre()))
                             .toList()
             );
         }
+
     }

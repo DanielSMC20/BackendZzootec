@@ -3,9 +3,11 @@ package com.zzootec.admin.service.serviceImpl;
 import com.zzootec.admin.dto.category.CategoryRequestDto;
 import com.zzootec.admin.dto.category.CategoryResponseDto;
 import com.zzootec.admin.entity.Category;
+import com.zzootec.admin.mapper.CategoryMapper;
 import com.zzootec.admin.repository.CategoryRepository;
 import com.zzootec.admin.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     // ==========================
     // LISTAR
@@ -58,19 +61,24 @@ public class CategoryServiceImpl implements CategoryService {
     // ACTUALIZAR
     // ==========================
     @Override
-    public CategoryResponseDto update(Long id, CategoryRequestDto dto) {
+    public CategoryResponseDto update(Long id, CategoryRequestDto request) {
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
-        category.setName(dto.getName());
+        category.setName(request.getName());
 
-        if (dto.getImageUrl() != null) {
-            category.setImageUrl(dto.getImageUrl());
+        if (request.getActive() != null) {
+            category.setActive(request.getActive());
+        }
+
+        if (request.getImageUrl() != null) {
+            category.setImageUrl(request.getImageUrl());
         }
 
         categoryRepository.save(category);
-        return map(category);
+
+        return categoryMapper.toResponse(category);
     }
 
     // ==========================
@@ -97,4 +105,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .active(c.getActive())
                 .build();
     }
+
+
 }

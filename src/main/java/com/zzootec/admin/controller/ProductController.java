@@ -5,6 +5,7 @@ import com.zzootec.admin.dto.product.ProductRequestDto;
 import com.zzootec.admin.dto.product.ProductResponseDto;
 import com.zzootec.admin.service.ProductService;
 import com.zzootec.admin.util.FileStorageService;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final FileStorageService fileStorageService;
+    private final Validator validator;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // =======================
@@ -49,6 +51,13 @@ public class ProductController {
 
         ProductRequestDto request = objectMapper.readValue(data, ProductRequestDto.class);
 
+        var violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new IllegalArgumentException(
+                violations.iterator().next().getMessage()
+            );
+        }
+
         if (file != null && !file.isEmpty()) {
             String path = fileStorageService.saveImage(file, "products");
             request.setImageUrl(path);
@@ -68,6 +77,13 @@ public class ProductController {
     ) throws Exception {
 
         ProductRequestDto request = objectMapper.readValue(data, ProductRequestDto.class);
+
+        var violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new IllegalArgumentException(
+                violations.iterator().next().getMessage()
+            );
+        }
 
         if (file != null && !file.isEmpty()) {
             String path = fileStorageService.saveImage(file, "products");

@@ -3,6 +3,7 @@ package com.zzootec.admin.dto.user;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
@@ -17,4 +18,5 @@ public class UserResponseDto {
     private boolean activo;
     private Set<String> roles;
     private String telefono;
+    private LocalDate fechaNacimiento;
 }

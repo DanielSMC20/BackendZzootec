@@ -5,6 +5,7 @@ import com.zzootec.admin.dto.brand.BrandRequestDto;
 import com.zzootec.admin.dto.brand.BrandResponseDto;
 import com.zzootec.admin.service.BrandService;
 import com.zzootec.admin.util.FileStorageService;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class BrandController {
 
     private final BrandService brandService;
     private final FileStorageService fileStorageService;
+    private final Validator validator;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping
@@ -41,6 +43,13 @@ public class BrandController {
         BrandRequestDto request =
                 objectMapper.readValue(data, BrandRequestDto.class);
 
+        var violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new IllegalArgumentException(
+                violations.iterator().next().getMessage()
+            );
+        }
+
         if (file != null && !file.isEmpty()) {
             String path = fileStorageService.saveImage(file, "brands");
             request.setLogoUrl(path);
@@ -58,6 +67,13 @@ public class BrandController {
 
         BrandRequestDto request =
                 objectMapper.readValue(data, BrandRequestDto.class);
+
+        var violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new IllegalArgumentException(
+                violations.iterator().next().getMessage()
+            );
+        }
 
         if (file != null && !file.isEmpty()) {
             String path = fileStorageService.saveImage(file, "brands");

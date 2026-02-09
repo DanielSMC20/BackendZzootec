@@ -46,6 +46,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/categories/**").permitAll()
                         .requestMatchers("/api/sales/**").permitAll()
                         .requestMatchers("/api/admin/users/**").permitAll()
+                        .requestMatchers("/api/user/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

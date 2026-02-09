@@ -9,7 +9,9 @@ public class UpdateProfileRequestDto {
 
     private String nombres;
     private String apellidos;
+    private String email;
     private String imageUrl;
     private String password;
     private String telefono;
+    private String fechaNacimiento;
 }

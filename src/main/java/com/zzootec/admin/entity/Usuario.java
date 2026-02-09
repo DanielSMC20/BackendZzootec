@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Usuario  {
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +36,12 @@ public class Usuario  {
 
     @Column(nullable = false)
     private boolean activo;
-    @NotBlank
-    @Size(min = 9, max = 15)
+
+    @Column(nullable = false, length = 15)
     private String telefono;
+
+    @Column(name = "fecha_nacimiento")
+    private LocalDate fechaNacimiento;
 
     @Column(name = "image_url", length = 300)
     private String imageUrl;
@@ -50,3 +54,4 @@ public class Usuario  {
     )
     private Set<Rol> roles = new HashSet<>();
 }
+
