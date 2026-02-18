@@ -105,4 +105,27 @@ public class ProductController {
         return productService.search(q);
     }
 
+    // =======================
+    // ENDPOINT PARA N8N: PRODUCTOS CON STOCK BAJO
+    // =======================
+    @GetMapping("/low-stock")
+    public List<ProductResponseDto> getLowStock(@RequestParam(defaultValue = "10") int threshold) {
+        return productService.getAll().stream()
+            .filter(p -> p.getStock() != null && p.getStock() < threshold)
+            .toList();
+    }
+
+    // =======================
+    // ENDPOINT PARA N8N: PRODUCTOS CON BAJA ROTACIÓN
+    // =======================
+    @GetMapping("/low-rotation")
+    public List<ProductResponseDto> getLowRotation(@RequestParam(defaultValue = "30") int days) {
+        // Por ahora retorna productos con stock alto (poca rotación)
+        // En el futuro puedes implementar lógica basada en ventas
+        return productService.getAll().stream()
+            .filter(p -> p.getStock() != null && p.getStock() > 50)
+            .limit(10)
+            .toList();
+    }
+
 }

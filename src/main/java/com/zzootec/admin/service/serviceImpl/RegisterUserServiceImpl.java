@@ -51,6 +51,8 @@ public class RegisterUserServiceImpl implements RegisterUserService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .activo(true)
+                // Si no se proporciona teléfono, usar cadena vacía para respetar la constraint NOT NULL
+                .telefono(request.getTelefono() != null ? request.getTelefono() : "")
                 .roles(roles)
                 .build();
 

@@ -35,7 +35,7 @@ public class SaleController {
         Random random = new Random();
         String[] productNames = {"Laptop Dell", "Mouse Logitech", "Teclado Mecánico", "Monitor LG", "Webcam HD", "Headset Gamer", "Mouse Pad", "Adaptador USB-C"};
         Double[] prices = {1200.0, 35.0, 150.0, 450.0, 120.0, 200.0, 25.0, 45.0};
-        
+
         // Generar ventas para los últimos 30 días
         for (int day = 1; day <= 30; day++) {
             int transactions = random.nextInt(3) + 1; // 1-3 transacciones por día
@@ -44,30 +44,30 @@ public class SaleController {
                 saleDto.setChannel("ONLINE");
                 saleDto.setDate(LocalDateTime.now().minusDays(30 - day));
                 saleDto.setClientId(1L);
-                
+
                 List<SaleItemRequestDto> items = new ArrayList<>();
                 int itemCount = random.nextInt(3) + 1; // 1-3 items por transacción
                 double total = 0;
-                
+
                 for (int i = 0; i < itemCount; i++) {
                     int productIdx = random.nextInt(productNames.length);
                     int qty = random.nextInt(3) + 1;
                     Double price = prices[productIdx];
-                    
+
                     SaleItemRequestDto item = new SaleItemRequestDto();
                     item.setProductId((long) (productIdx + 1));
                     item.setProductName(productNames[productIdx]);
                     item.setQuantity(qty);
                     item.setPrice(price);
                     item.setSubtotal(price * qty);
-                    
+
                     items.add(item);
                     total += price * qty;
                 }
-                
+
                 saleDto.setItems(items);
                 saleDto.setTotal(total);
-                
+
                 try {
                     saleService.create(saleDto);
                 } catch (Exception e) {
@@ -75,8 +75,42 @@ public class SaleController {
                 }
             }
         }
-        
+
         return "Se generaron datos de prueba de ventas";
     }
-}
 
+    // =======================
+    // ENDPOINT PARA N8N: REPORTE DIARIO DE VENTAS
+    // =======================
+    @GetMapping("/daily-report")
+    public java.util.Map<String, Object> getDailyReport(@RequestParam(required = false) String date) {
+        LocalDateTime targetDate = date != null
+                ? LocalDateTime.parse(date + "T00:00:00")
+                : LocalDateTime.now();
+
+        List<SaleResponseDto> sales = saleService.findAll();
+
+        // Filtrar ventas del día
+        List<SaleResponseDto> dailySales = sales.stream()
+                .filter(s -> s.getDate() != null &&
+                        s.getDate().toLocalDate().equals(targetDate.toLocalDate()))
+                .toList();
+
+        // Calcular métricas
+        double totalSales = dailySales.stream()
+                .mapToDouble(s -> s.getTotal() != null ? s.getTotal() : 0.0)
+                .sum();
+
+        int totalTransactions = dailySales.size();
+
+        double averageTicket = totalTransactions > 0 ? totalSales / totalTransactions : 0.0;
+
+        return java.util.Map.of(
+                "date", targetDate.toLocalDate().toString(),
+                "totalSales", totalSales,
+                "totalTransactions", totalTransactions,
+                "averageTicket", averageTicket,
+                "sales", dailySales
+        );
+    }
+}

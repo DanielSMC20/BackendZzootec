@@ -27,4 +27,7 @@ public class RegisterUserRequestDto {
 
     @NotEmpty
     private List<String> roles; // ADMIN, VENTAS, ALMACEN
+
+    // Opcional: teléfono (se añade para evitar inserciones con valor nulo)
+    private String telefono;
 }
