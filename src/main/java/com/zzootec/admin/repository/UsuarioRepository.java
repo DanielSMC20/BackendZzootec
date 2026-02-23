@@ -1,6 +1,4 @@
 package com.zzootec.admin.repository;
-import com.zzootec.admin.dto.user.UpdateProfileRequestDto;
-import com.zzootec.admin.dto.user.UserResponseDto;
 import com.zzootec.admin.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

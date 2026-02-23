@@ -23,5 +23,6 @@ public class Brand {
     private String logoUrl;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean active = true;
 }

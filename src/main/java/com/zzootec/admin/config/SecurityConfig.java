@@ -37,17 +37,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/api/ai/**").permitAll()
-                        .requestMatchers("/api/clients/**").permitAll()
-                        .requestMatchers("/api/admin/products/**").permitAll()
-                        .requestMatchers("/api/admin/brands/**").permitAll()
-                        .requestMatchers("/api/admin/categories/**").permitAll()
-                        .requestMatchers("/api/sales/**").permitAll()
-                        .requestMatchers("/api/admin/users/**").permitAll()
-                        .requestMatchers("/api/promotions/**").permitAll() // Para n8n
-
+                        // Rutas que requieren autenticación
+                        .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/ai/**").authenticated()
+                        .requestMatchers("/api/clients/**").authenticated()
+                        .requestMatchers("/api/admin/products/**").authenticated()
+                        .requestMatchers("/api/admin/brands/**").authenticated()
+                        .requestMatchers("/api/admin/categories/**").authenticated()
+                        .requestMatchers("/api/sales/**").authenticated()
+                        .requestMatchers("/api/admin/users/**").authenticated()
+                        .requestMatchers("/api/promotions/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

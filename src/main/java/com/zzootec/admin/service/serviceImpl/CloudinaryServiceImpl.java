@@ -18,7 +18,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     public String uploadImage(MultipartFile file) {
 
         try {
-            Map result = cloudinary.uploader().upload(
+            Map<String, Object> result = cloudinary.uploader().upload(
                     file.getBytes(),
                     Map.of(
                             "folder", "zzootec/products",

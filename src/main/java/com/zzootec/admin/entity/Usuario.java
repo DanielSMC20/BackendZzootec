@@ -1,8 +1,6 @@
 package com.zzootec.admin.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -52,6 +50,7 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
+    @Builder.Default
     private Set<Rol> roles = new HashSet<>();
 }
 

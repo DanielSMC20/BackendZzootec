@@ -14,7 +14,7 @@ public class ClientRequestDto {
     @NotBlank(message = "Los apellidos son obligatorios")
     private String apellidos;
 
-    @Pattern(regexp = "^\\d{7,15}$", message = "El teléfono debe tener entre 7 y 15 dígitos")
+    @Pattern(regexp = "^\\d{9}$", message = "El teléfono debe tener exactamente 9 dígitos")
     private String telefono;
 
     @Email(message = "Debe ser un email válido")

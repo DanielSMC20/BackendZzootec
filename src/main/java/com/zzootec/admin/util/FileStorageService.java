@@ -83,7 +83,7 @@ public class FileStorageService {
         }
 
         try {
-            Map uploadResult = cloudinary.uploader().upload(
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(
                     tempFile,
                     ObjectUtils.asMap(
                             "folder", "zzootec/" + folder,

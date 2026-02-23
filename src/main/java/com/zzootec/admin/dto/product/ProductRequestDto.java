@@ -11,11 +11,11 @@ import lombok.*;
 public class ProductRequestDto {
 
     @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 150)
+    @Size(max = 100)
     private String name;
 
     @NotBlank(message = "La descripción es obligatoria")
-    @Size(max = 300)
+    @Size(max = 500)
     private String description;
 
     @NotNull(message = "El precio es obligatorio")

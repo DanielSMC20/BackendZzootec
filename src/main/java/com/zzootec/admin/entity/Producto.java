@@ -39,5 +39,6 @@ public class Producto {
     @ManyToOne
     private Brand brand;
 
+    @Builder.Default
     private Boolean active = true;
 }
